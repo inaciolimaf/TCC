@@ -16,25 +16,22 @@ void setup() {
     setupWiFi();
     setupI2S();
 
-    // Cria a fila para armazenar os chunks de áudio
     audioQueue = xQueueCreate(QUEUE_SIZE, sizeof(uint8_t*));
     if (audioQueue == NULL) {
         Serial.println("[ERRO] Falha ao criar a fila!");
-        while (1); // Hang se a fila não puder ser criada
+        while (1);
     }
 
-    // Cria a tarefa de leitura do I2S
     xTaskCreatePinnedToCore(
-        ReadI2STask,       // Função da tarefa
-        "ReadI2STask",     // Nome da tarefa
-        8192,              // Tamanho da pilha
-        NULL,              // Parâmetro
-        1,                 // Prioridade
-        &ReadI2STaskHandle,// Handle da tarefa
-        0                  // Núcleo
+        ReadI2STask,       
+        "ReadI2STask",     
+        8192,              
+        NULL,              
+        1,                 
+        &ReadI2STaskHandle,
+        0                  
     );
 
-    // Cria a tarefa de envio HTTP
     xTaskCreatePinnedToCore(
         SendHTTPTask,
         "SendHTTPTask",
@@ -42,7 +39,7 @@ void setup() {
         NULL,
         1,
         &SendHTTPTaskHandle,
-        1 // Executa em outro núcleo para melhor performance
+        1
     );
 }
 

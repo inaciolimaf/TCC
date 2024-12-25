@@ -5,9 +5,7 @@ bool sendEmptyPOST(const char* url) {
     HTTPClient http;
     http.begin(url);
     int httpCode = http.POST("");
-    if (httpCode > 0) {
-        Serial.printf("[HTTP] POST %s -> code: %d\n", url, httpCode);
-    } else {
+    if (httpCode <= 0) {
         Serial.printf("[ERRO] POST %s falhou: %s\n", url, http.errorToString(httpCode).c_str());
     }
     http.end();

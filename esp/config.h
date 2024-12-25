@@ -10,7 +10,6 @@
 #define I2S_SCK 26
 #define I2S_SD 22
 
-// Change extern declarations to just declarations with extern
 extern const char* START_STREAM_URL;
 extern const char* UPLOAD_CHUNK_URL;
 extern const char* FINISH_STREAM_URL;
@@ -40,5 +39,3 @@ static const i2s_pin_config_t pinConfig = {
 
 extern const size_t CHUNK_SAMPLES;
 extern const size_t CHUNK_SIZE;
-
-#endif // CONFIG_H
