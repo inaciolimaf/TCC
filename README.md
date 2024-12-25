@@ -6,3 +6,8 @@
 | LRCLK   | GPIO 25| Neste exemplo, vamos usar o GPIO 25 como Word Select (WS).          |
 | DOUT    | GPIO 22| Dados de áudio que entram no ESP32 (Data In).                       |
 | SEL     | GND    | Definir para canal esquerdo (Left). Geralmente ligue em GND.        |
+
+## TODO
+
+- [] Iniciar a API
+- [] Iniciar o front
