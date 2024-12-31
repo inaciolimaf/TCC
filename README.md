@@ -10,4 +10,16 @@
 ## TODO
 
 - [] Iniciar a API
-- [] Iniciar o front
+- [X] Iniciar o front
+
+Modelagem do banco de dados
+Usuários
+    name
+    email
+    passwordHash
+    creationDate
+Alertas
+    user
+    state
+    reason ENUM(BUTTON, ACCELEROMETER, GPS)
+    creationDate

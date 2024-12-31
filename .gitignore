@@ -2,3 +2,5 @@ node_modules
 libraries
 *.raw
 *.mp3
+package-lock.json
+.env

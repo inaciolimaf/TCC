@@ -12,14 +12,14 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:3001/URL_DA_API_DE_LOGIN', {
+      const response = await axios.post('http://localhost:3001/api/v1/login/', {
         email,
-        senha,
+        "password": senha,
       });
 
       if (response.status === 200) {
         // Salva o token retornado pela API
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('token', response.data);
         // Redireciona para o dashboard
         router.push('/dashboard');
       }
