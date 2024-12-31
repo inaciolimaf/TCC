@@ -1,1 +1,4 @@
 node_modules
+libraries
+*.raw
+*.mp3
