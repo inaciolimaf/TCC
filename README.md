@@ -22,4 +22,6 @@ Alertas
     user
     state
     reason ENUM(BUTTON, ACCELEROMETER, GPS)
+    latitude
+    logintude
     creationDate
