@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 // Função para finalizar o stream
 const finalizeStream = (res: Response) => {
     const fullBuffer = Buffer.concat(streamingBuffers);
+    streamingBuffers = [];
     console.log(
         "[LOG] Finalizando stream. Tamanho total:",
         fullBuffer.length,
@@ -35,6 +36,14 @@ const finalizeStream = (res: Response) => {
         ])
         .audioCodec("libmp3lame")
         .audioBitrate("128k")
+        .audioFilters([
+            // Aumente o valor para obter maior ganho. Exemplos:
+            // "volume=2.0" = dobra o volume (ganho de 6dB)
+            // "volume=4.0" = quadruplica o volume (ganho de 12dB)
+            // Outra opção é usar a notação em dB diretamente:
+            // "volume=6dB" = aumenta 6dB
+            "volume=15dB" // Aumenta o volume em 10dB
+        ])
         .on("start", (cmd) => {
             console.log("[LOG] ffmpeg start:", cmd);
         })
@@ -54,7 +63,6 @@ const finalizeStream = (res: Response) => {
             );
             // fs.unlinkSync(tmpInputFile); // remove o arquivo .raw
             // Opcionalmente, pode limpar o “streamingBuffers”
-            streamingBuffers = [];
             return res.status(200).send(`OK! Áudio salvo em: ${outputFile}`);
         })
         .save(outputFile);
@@ -83,23 +91,27 @@ app.post("/start-stream", (req: Request, res: Response) => {
 2) Recebe um chunk de áudio bruto (raw PCM 16bits). Vamos acumular em “streamingBuffers”.
 */
 app.post("/upload-chunk", (req: Request, res: Response) => {
+    
+    
+    console.time("[TIMER] Tempo de execução");
     const chunk = req.body as Buffer; // express.raw retorna Buffer
-    console.log("[LOG] Chunk recebido:", chunk);
-
+    
     if (!chunk || chunk.length === 0) {
         console.error("[ERRO] Nenhum chunk recebido!");
+        console.timeEnd("[TIMER] Tempo de execução"); // Encerra o timer antes de retornar
         return res.status(400).send("Nenhum chunk recebido.");
     }
-
+    console.timeEnd("[TIMER] Tempo de execução");
+    console.time("[TIMER] Tempo de execução");
     streamingBuffers.push(chunk);
     const totalBufferSize = streamingBuffers.reduce(
         (acc, b) => acc + b.length,
         0
     );
-
-    console.log("[LOG] Recebido chunk de", chunk.length, "bytes");
-    console.log("[LOG] Tamanho total acumulado:", totalBufferSize, "bytes");
-
+    console.timeEnd("[TIMER] Tempo de execução");
+    console.time("[TIMER] Tempo de execução");
+    console.timeEnd("[TIMER] Tempo de execução");
+    console.time("[TIMER] Tempo de execução");
     // Verifica se o tamanho acumulado atinge ou excede 1MB (1,048,576 bytes)
     const ONE_MB = 1 * 1024 * 1024; // 1MB em bytes
 
@@ -107,10 +119,11 @@ app.post("/upload-chunk", (req: Request, res: Response) => {
         console.log(
             "[LOG] Tamanho do buffer atingiu 1MB. Finalizando o stream automaticamente."
         );
-        // Como finalizeStream envia uma resposta, retornamos aqui para evitar enviar múltiplas respostas
+        console.timeEnd("[TIMER] Tempo de execução"); // Encerra o timer
         return finalizeStream(res);
     }
 
+    console.timeEnd("[TIMER] Tempo de execução"); // Encerra o timer
     return res
         .status(200)
         .send(
