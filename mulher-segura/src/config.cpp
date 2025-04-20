@@ -6,6 +6,7 @@ const char* FINISH_STREAM_URL = "http://192.168.3.52:3000/finish-stream";
 
 const size_t CHUNK_SAMPLES = 2048 * 6;
 const size_t CHUNK_SIZE = CHUNK_SAMPLES * 2;
+
 const i2s_config_t i2sConfig = {
     .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX),
     .sample_rate = 16000,

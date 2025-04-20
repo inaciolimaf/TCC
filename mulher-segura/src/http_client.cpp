@@ -1,5 +1,6 @@
 #include "http_client.h"
 #include "audio_manager.h"
+#include "config.h"
 
 bool sendEmptyPOST(const char* url) {
     HTTPClient http;
@@ -28,31 +29,59 @@ bool sendChunk(const uint8_t* data, size_t length) {
     return (httpCode == 200);
 }
 
-void SendHTTPTask(void* parameter) {
+bool startStreamSession() {
     if (!sendEmptyPOST(START_STREAM_URL)) {
         Serial.println("[ERRO] Falha ao iniciar stream no servidor!");
+        return false;
     }
+    return true;
+}
 
-    while (true) {
-        uint8_t* receivedChunk = NULL;
-        
-        if (xQueueReceive(audioQueue, &receivedChunk, portMAX_DELAY) == pdTRUE) {
-            if (receivedChunk != NULL) {
-                Serial.printf("Enviando chunk (%d bytes)...\n", (int)CHUNK_SIZE);
-                if (!sendChunk(receivedChunk, CHUNK_SIZE)) {
-                    Serial.println("[ERRO] Falha ao enviar chunk!");
-                }
-                // Em vez de liberar, devolve para o pool
-                xQueueSend(buffersQueue, &receivedChunk, 0);
-                UBaseType_t count = uxQueueMessagesWaiting(audioQueue);
-                Serial.printf("Itens na audioQueue: %u\n", count);
-            }
-        }
-    }
-
+bool endStreamSession() {
     if (!sendEmptyPOST(FINISH_STREAM_URL)) {
         Serial.println("[ERRO] Falha ao finalizar stream no servidor!");
+        return false;
     }
+    return true;
+}
 
-    vTaskDelete(NULL);
+uint8_t* receiveAudioChunk() {
+    uint8_t* receivedChunk = NULL;
+    
+    if (xQueueReceive(audioQueue, &receivedChunk, portMAX_DELAY) != pdTRUE) {
+        return NULL;
+    }
+    
+    return receivedChunk;
+}
+
+bool processAndSendChunk(uint8_t* chunk) {
+    if (chunk == NULL) {
+        return false;
+    }
+    
+    Serial.printf("Enviando chunk (%d bytes)...\n", (int)CHUNK_SIZE);
+    if (!sendChunk(chunk, CHUNK_SIZE)) {
+        Serial.println("[ERRO] Falha ao enviar chunk!");
+        return false;
+    }
+    return true;
+}
+
+void returnChunkToPool(uint8_t* chunk) {
+    xQueueSend(buffersQueue, &chunk, 0);
+    UBaseType_t count = uxQueueMessagesWaiting(audioQueue);
+    Serial.printf("Itens na audioQueue: %u\n", count);
+}
+
+void sendHTTPTask(void* parameter) {
+    startStreamSession();
+    while (true) {
+        uint8_t* chunk = receiveAudioChunk();
+        
+        if (chunk != NULL) {
+            processAndSendChunk(chunk);
+            returnChunkToPool(chunk);
+        }
+    }
 }

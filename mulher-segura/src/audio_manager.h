@@ -5,9 +5,6 @@
 #include "driver/i2s.h"
 #include "config.h"
 
-extern QueueHandle_t audioQueue;
-extern QueueHandle_t buffersQueue;
-
 void setupI2S();
 void ReadI2STask(void* parameter);
 

@@ -5,12 +5,12 @@
 #include "wifi_manager.h"
 #include "audio_manager.h"
 #include "http_client.h"
+
 QueueHandle_t audioQueue;
-// Definição das tarefas
+
 TaskHandle_t ReadI2STaskHandle = NULL;
 TaskHandle_t SendHTTPTaskHandle = NULL;
 
-#define NUM_BUFFERS 3  // Defina de acordo com a taxa de chunks esperada
 uint8_t* buffersPool[NUM_BUFFERS];
 QueueHandle_t buffersQueue;
 
@@ -21,7 +21,6 @@ void initBuffersPool() {
         if (buffersPool[i] == NULL) {
             Serial.printf("[ERRO] Falha ao alocar buffer %d\n", i);
         } else {
-            // Enfileira o buffer para que fique disponível para uso
             xQueueSend(buffersQueue, &buffersPool[i], 0);
         }
     }
@@ -50,8 +49,8 @@ void setup() {
     );
 
     xTaskCreatePinnedToCore(
-        SendHTTPTask,
-        "SendHTTPTask",
+        sendHTTPTask,
+        "sendHTTPTask",
         8192,
         NULL,
         1,
@@ -59,8 +58,8 @@ void setup() {
         1
     );
     xTaskCreatePinnedToCore(
-        SendHTTPTask,
-        "SendHTTPTask",
+        sendHTTPTask,
+        "sendHTTPTask",
         8192,
         NULL,
         1,
@@ -68,8 +67,8 @@ void setup() {
         1
     );
     xTaskCreatePinnedToCore(
-        SendHTTPTask,
-        "SendHTTPTask",
+        sendHTTPTask,
+        "sendHTTPTask",
         8192,
         NULL,
         1,
@@ -77,8 +76,8 @@ void setup() {
         1
     );
     xTaskCreatePinnedToCore(
-        SendHTTPTask,
-        "SendHTTPTask",
+        sendHTTPTask,
+        "sendHTTPTask",
         8192,
         NULL,
         1,

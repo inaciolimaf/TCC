@@ -7,6 +7,6 @@
 
 bool sendEmptyPOST(const char* url);
 bool sendChunk(const uint8_t* data, size_t length);
-void SendHTTPTask(void* parameter);
+void sendHTTPTask(void* parameter);
 
 #endif
