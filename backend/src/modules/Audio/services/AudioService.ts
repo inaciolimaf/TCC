@@ -25,7 +25,8 @@ export class AudioService {
         if (totalBufferSize >= ONE_MB) {
             return this.finalizeStream(res);
         }
-
+        console.log(`Tamanho total do buffer: ${totalBufferSize} bytes`);
+        
         return `Chunk armazenado. Tamanho total até agora: ${totalBufferSize} bytes`;
     }
 
@@ -35,13 +36,13 @@ export class AudioService {
             throw new Error("Nenhum dado acumulado.");
         }
 
-        const tmpInputFile = path.join(__dirname, "temp_stream.raw");
+        const tmpInputFile = path.join(__dirname, "../../../../temp/temp_stream.raw");
         fs.writeFileSync(tmpInputFile, fullBuffer);
 
         const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
         const outputFile = path.join(
             __dirname,
-            `audio_stream_${timestamp}.mp3`
+            `../../../../temp/audio_stream_${timestamp}.mp3`
         );
 
         return new Promise((resolve, reject) => {
