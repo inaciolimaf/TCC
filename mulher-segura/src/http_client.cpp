@@ -18,9 +18,7 @@ bool sendChunk(const uint8_t* data, size_t length) {
     http.begin(UPLOAD_CHUNK_URL);
     http.addHeader("Content-Type", "application/octet-stream");
     int httpCode = http.POST(const_cast<uint8_t*>(data), length);
-    if (httpCode > 0) {
-        Serial.printf("[HTTP] POST chunk -> code: %d\n", httpCode);
-    } else {
+    if (httpCode <= 0) {
         Serial.printf("[ERRO] POST chunk falhou: %s\n", http.errorToString(httpCode).c_str());
     }
     String resp = http.getString();
@@ -70,8 +68,8 @@ bool processAndSendChunk(uint8_t* chunk) {
 
 void returnChunkToPool(uint8_t* chunk) {
     xQueueSend(buffersQueue, &chunk, 0);
-    UBaseType_t count = uxQueueMessagesWaiting(audioQueue);
-    Serial.printf("Itens na audioQueue: %u\n", count);
+    // UBaseType_t count = uxQueueMessagesWaiting(audioQueue);
+    // Serial.printf("Itens na audioQueue: %u\n", count);
 }
 
 void sendHTTPTask(void* parameter) {
