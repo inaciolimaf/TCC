@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import IUser from "../dtos/IUser";
 
-// Esquema de usuário
 const UserSchema = new Schema<IUser>({
     name: {
         type: String,
@@ -22,7 +21,6 @@ const UserSchema = new Schema<IUser>({
     },
 });
 
-// Modelo de usuário
 const UserMongo = mongoose.model<IUser>("User", UserSchema);
 
 export default UserMongo;

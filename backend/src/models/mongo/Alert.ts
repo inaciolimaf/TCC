@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import IAlert from "../dtos/IAlert";
 
-// Esquema de alerta
 const AlertSchema = new Schema<IAlert>({
     user: {
         type: Schema.Types.ObjectId,
@@ -31,7 +30,6 @@ const AlertSchema = new Schema<IAlert>({
     }
 });
 
-// Modelo de alerta
 const AlertMongo = mongoose.model<IAlert>("Alert", AlertSchema);
 
 export default AlertMongo;
