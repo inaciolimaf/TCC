@@ -46,7 +46,13 @@ export class UserController {
     ): Promise<void> {
         try {
             const users = await this.userService.listUsers();
-            response.json(users);
+            const usersResponse = users.map((user) => ({
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                creationDate: user.creationDate,
+            }));
+            response.json(usersResponse);
         } catch (err) {
             next(err);
         }
@@ -58,9 +64,16 @@ export class UserController {
         next: NextFunction
     ): Promise<void> {
         try {
-            const id = request.params.user_id;
+            const id = request.params.user_logged_id;
             const user = await this.userService.showUserById(id);
-            response.json(user);
+            
+            const userResponse = {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                creationDate: user.creationDate,
+            };
+            response.json(userResponse);
         } catch (err) {
             next(err);
         }

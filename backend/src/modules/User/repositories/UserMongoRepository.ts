@@ -30,8 +30,8 @@ export default class UserMongoRepository implements IUserRepository {
         const users = await UserMongo.findOne({ email });
         return users;
     }
-    public async showUserById(email: string): Promise<IUser | null> {
-        const users = await UserMongo.findOne({ email });
+    public async showUserById(id: string): Promise<IUser | null> {
+        const users = await UserMongo.findOne({ _id: id });
         return users;
     }
 }

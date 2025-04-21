@@ -13,7 +13,7 @@ userRouter.post(
 userRouter.get(
     "/user/show",
     ensureAuthenticate,
-    userController.list.bind(userController)
+    userController.showLogado.bind(userController)
 );
 
 export default userRouter;
