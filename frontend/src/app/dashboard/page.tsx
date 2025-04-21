@@ -23,15 +23,23 @@ const Dashboard: React.FC = () => {
                         },
                     }
                 );
-
+                const gpsResponse = await axios.get(
+                    "http://localhost:3001/api/v1/gps/list",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                
                 if (userResponse.status === 200) {
                     const usuario: User = {
                         nome: userResponse.data.name,
                         emPerigo: true,
                         urlAudio: "https://exemplo.com/audio.mp3",
                         localizacao: {
-                            lat: -3.596265,
-                            lng: -40.775259,
+                            lat: gpsResponse.data[0].latitude,
+                            lng: gpsResponse.data[0].longitude,
                         },
                     };
                     setUsuario(usuario);
