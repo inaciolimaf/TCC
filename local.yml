@@ -1,0 +1,17 @@
+services:
+    node-app:
+        build:
+            context: ./backend
+            args:
+                - CLEAN_CACHE
+        ports:
+            - "3001:3001"
+        command: npm run dev
+        volumes:
+            - .:/app
+    frontend:
+        build:
+            context: ./frontend
+        command: npm run dev
+        ports:
+            - 3000:3000
