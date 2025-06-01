@@ -40,6 +40,18 @@ void setup() {
         Serial.println("[ERRO] Falha ao criar a fila!");
         while (1);
     }
+    if (ENABLE_GPS){
+        xTaskCreatePinnedToCore(
+          readGPSTask,
+          "readGPSTask",
+          16486,
+          NULL,
+          1,
+          NULL,
+          1
+        );
+    }
+    
     if (ENABLE_MICROFONE) {
         xTaskCreatePinnedToCore(
             ReadI2STask,       
@@ -91,5 +103,5 @@ void setup() {
 }
 
 void loop() {
-    readGPS();
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
 }

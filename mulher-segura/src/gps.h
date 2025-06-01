@@ -1,2 +1,2 @@
 void setupGPS();
-void readGPS();
+void readGPSTask(void * parameter) ;
