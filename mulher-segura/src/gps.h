@@ -1,0 +1,2 @@
+void setupGPS();
+void readGPS();

@@ -13,6 +13,11 @@
 #define QUEUE_SIZE 2
 #define NUM_BUFFERS 3
 #define ENABLE_MICROFONE 0
+#define ENABLE_GPS 1
+
+#define RXD2 16
+#define TXD2 17
+#define GPS_BAUD 9600
 
 extern QueueHandle_t audioQueue;
 extern QueueHandle_t buffersQueue;

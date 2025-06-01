@@ -5,6 +5,8 @@
 #include "wifi_manager.h"
 #include "audio_manager.h"
 #include "http_client.h"
+#include "gps.h"
+#include <TinyGPS++.h>
 
 QueueHandle_t audioQueue;
 
@@ -31,6 +33,7 @@ void setup() {
     delay(1000);
     setupWiFi();
     setupI2S();
+    setupGPS();
     initBuffersPool();
     audioQueue = xQueueCreate(QUEUE_SIZE, sizeof(uint8_t*));
     if (audioQueue == NULL) {
@@ -88,5 +91,5 @@ void setup() {
 }
 
 void loop() {
-    vTaskDelay(pdMS_TO_TICKS(10000));
+    readGPS();
 }
