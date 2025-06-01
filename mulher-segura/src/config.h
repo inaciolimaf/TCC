@@ -12,6 +12,7 @@
 
 #define QUEUE_SIZE 2
 #define NUM_BUFFERS 3
+#define ENABLE_MICROFONE 0
 
 extern QueueHandle_t audioQueue;
 extern QueueHandle_t buffersQueue;
@@ -19,7 +20,6 @@ extern QueueHandle_t buffersQueue;
 extern const char* START_STREAM_URL;
 extern const char* UPLOAD_CHUNK_URL;
 extern const char* FINISH_STREAM_URL;
-
 
 extern const size_t CHUNK_SAMPLES;
 extern const size_t CHUNK_SIZE;
