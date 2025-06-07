@@ -13,7 +13,7 @@
 #define QUEUE_SIZE 2
 #define NUM_BUFFERS 3
 #define ENABLE_MICROFONE 0
-#define ENABLE_GPS 1
+#define ENABLE_GPS 0
 
 #define RXD2 16
 #define TXD2 17
