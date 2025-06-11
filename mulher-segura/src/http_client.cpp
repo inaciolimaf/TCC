@@ -68,8 +68,6 @@ bool processAndSendChunk(uint8_t* chunk) {
 
 void returnChunkToPool(uint8_t* chunk) {
     xQueueSend(buffersQueue, &chunk, 0);
-    // UBaseType_t count = uxQueueMessagesWaiting(audioQueue);
-    // Serial.printf("Itens na audioQueue: %u\n", count);
 }
 
 void sendHTTPTask(void* parameter) {

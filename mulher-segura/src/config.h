@@ -14,6 +14,10 @@
 #define NUM_BUFFERS 3
 #define ENABLE_MICROFONE 0
 #define ENABLE_GPS 0
+#define ENABLE_MPU 1
+
+#define SDA_PIN 21
+#define SCL_PIN 23
 
 #define RXD2 16
 #define TXD2 17

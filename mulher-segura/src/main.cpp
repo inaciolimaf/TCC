@@ -6,12 +6,18 @@
 #include "audio_manager.h"
 #include "http_client.h"
 #include "gps.h"
+#include "mpu.h"
 #include <TinyGPS++.h>
+
+
+#define SDA_PIN 21
+#define SCL_PIN 23
 
 QueueHandle_t audioQueue;
 
 TaskHandle_t ReadI2STaskHandle = NULL;
 TaskHandle_t SendHTTPTaskHandle = NULL;
+TaskHandle_t mpuTaskHandle = NULL;
 
 uint8_t* buffersPool[NUM_BUFFERS];
 QueueHandle_t buffersQueue;
@@ -27,6 +33,7 @@ void initBuffersPool() {
         }
     }
 }
+
 
 void setup() {
     Serial.begin(115200);
@@ -51,7 +58,6 @@ void setup() {
           1
         );
     }
-    
     if (ENABLE_MICROFONE) {
         xTaskCreatePinnedToCore(
             ReadI2STask,       
@@ -100,6 +106,19 @@ void setup() {
             1
         );    
     }
+    if (ENABLE_MPU){
+      setupMPU();
+      xTaskCreatePinnedToCore(
+          readMPUTask,
+          "readMPUTask",
+          4096,
+          NULL,
+          1,
+          &mpuTaskHandle,
+          1
+      );
+    }
+    
 }
 
 void loop() {
