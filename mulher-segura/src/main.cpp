@@ -7,11 +7,8 @@
 #include "http_client.h"
 #include "gps.h"
 #include "mpu.h"
+#include "button.h"
 #include <TinyGPS++.h>
-
-
-#define SDA_PIN 21
-#define SCL_PIN 23
 
 QueueHandle_t audioQueue;
 
@@ -42,6 +39,7 @@ void setup() {
     setupI2S();
     setupGPS();
     initBuffersPool();
+    setupButton();
     audioQueue = xQueueCreate(QUEUE_SIZE, sizeof(uint8_t*));
     if (audioQueue == NULL) {
         Serial.println("[ERRO] Falha ao criar a fila!");
@@ -72,7 +70,7 @@ void setup() {
         xTaskCreatePinnedToCore(
             sendHTTPTask,
             "sendHTTPTask",
-            8192,
+            4096,
             NULL,
             1,
             &SendHTTPTaskHandle,
@@ -81,7 +79,7 @@ void setup() {
         xTaskCreatePinnedToCore(
             sendHTTPTask,
             "sendHTTPTask",
-            8192,
+            4096,
             NULL,
             1,
             &SendHTTPTaskHandle,
@@ -90,7 +88,7 @@ void setup() {
         xTaskCreatePinnedToCore(
             sendHTTPTask,
             "sendHTTPTask",
-            8192,
+            4096,
             NULL,
             1,
             &SendHTTPTaskHandle,
@@ -99,7 +97,7 @@ void setup() {
         xTaskCreatePinnedToCore(
             sendHTTPTask,
             "sendHTTPTask",
-            8192,
+            4096,
             NULL,
             1,
             &SendHTTPTaskHandle,
@@ -118,9 +116,7 @@ void setup() {
           1
       );
     }
-    
 }
-
 void loop() {
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    vTaskDelay(50 / portTICK_PERIOD_MS);
 }

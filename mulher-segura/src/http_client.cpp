@@ -81,3 +81,17 @@ void sendHTTPTask(void* parameter) {
         }
     }
 }
+
+bool sendOccurence(const char* json) {
+    HTTPClient http;
+    http.begin(CREATE_OCCURENCE);
+    http.addHeader("Content-Type", "application/json");
+    int httpCode = http.POST(json);
+    if (httpCode <= 0) {
+        Serial.printf("[ERRO] POST occurrence falhou: %s\n", http.errorToString(httpCode).c_str());
+    }
+    String resp = http.getString();
+    Serial.println("Resposta do servidor: " + resp);
+    http.end();
+    return (httpCode == 200);
+}

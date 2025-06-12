@@ -3,6 +3,7 @@
 #include <Wire.h>
 #include <math.h>
 #include "config.h"
+#include "http_client.h"
 
 Adafruit_MPU6050 mpu;
 
@@ -26,10 +27,9 @@ void readMPUTask(void* parameter) {
                                 a.acceleration.y * a.acceleration.y +
                                 a.acceleration.z * a.acceleration.z);
         float totalG = accelTotal / 9.81;
-        if (totalG < 0.5) {
-            Serial.println("*** QUEDA LIVRE DETECTADA! ***");
-        } else if (totalG > 2.0) {
-            Serial.println("*** IMPACTO/MOVIMENTO FORTE! ***");
+        if (totalG < 0.5 || totalG > 2.0) {
+            const char* jsonData = "{\"isInDanger\": true, \"reason\": \"FALL\"}";
+            sendOccurence(jsonData);
         }
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
