@@ -6,9 +6,12 @@ import DangerLabel from "../../components/DangerLabel";
 import AudioPlayer from "../../components/AudioPlayer";
 import Map from "../../components/Map";
 import { User } from "../../interfaces/User";
+import HistoricoOcorrencias from "@/components/HistóricoOccurence";
+import { Occurence } from "@/interfaces/Occurence";
 
 const Dashboard: React.FC = () => {
     const [usuario, setUsuario] = useState<User | null>(null);
+    const [occurences, setOccurences] = useState<Occurence[] | null>(null);
 
     useEffect(() => {
         const fetchUsuario = async () => {
@@ -16,7 +19,7 @@ const Dashboard: React.FC = () => {
 
             try {
                 const userResponse = await axios.get(
-                    "http://localhost:3001/api/v1/user/show",
+                    "http://localhost:3000/api/v1/user/show",
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -24,18 +27,32 @@ const Dashboard: React.FC = () => {
                     }
                 );
                 const gpsResponse = await axios.get(
-                    "http://localhost:3001/api/v1/gps/list",
+                    "http://localhost:3000/api/v1/gps/list",
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     }
                 );
+
+                const occurenceResponse = await axios.get(
+                    "http://localhost:3000/api/v1/occurrence/list",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                setOccurences(occurenceResponse.data);
+                
+                console.log(gpsResponse.data);
+                console.log(occurenceResponse.data[0]);
                 
                 if (userResponse.status === 200) {
                     const usuario: User = {
+                        id: userResponse.data.id,
                         nome: userResponse.data.name,
-                        emPerigo: true,
+                        emPerigo: occurenceResponse.data[0].isInDanger,
                         urlAudio: "https://exemplo.com/audio.mp3",
                         localizacao: {
                             lat: gpsResponse.data[0].latitude,
@@ -65,6 +82,7 @@ const Dashboard: React.FC = () => {
             <DangerLabel emPerigo={usuario.emPerigo} />
             <AudioPlayer urlAudio={usuario.urlAudio} />
             <Map localizacao={usuario.localizacao} />
+            <HistoricoOcorrencias ocorrencias={occurences ?? []}/>
         </div>
     );
 };

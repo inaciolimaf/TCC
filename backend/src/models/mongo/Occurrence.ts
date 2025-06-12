@@ -11,6 +11,11 @@ const OccurrenceSchema = new Schema<IOccurrence>({
         enum: ["PANIC_BUTTON", "FALL"],
         required: true,
     },
+    creationDate: {
+        type: Date,
+        default: Date.now,
+        required: true,
+    },
 });
 
 const OccurrenceMongo = mongoose.model<IOccurrence>(

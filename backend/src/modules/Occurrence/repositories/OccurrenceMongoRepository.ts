@@ -28,7 +28,8 @@ export default class OccurrenceMongoRepository
         try {
             const occurrences = await OccurrenceMongo.find().sort({
                 creationDate: -1,
-            });
+            }).limit(10);
+            
             return occurrences.map((occ) => ({
                 id: occ._id,
                 isInDanger: occ.isInDanger,
