@@ -1,10 +1,14 @@
+// src/modules/Audio/services/AudioService.ts
 import ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
 import path from "path";
 import { Response } from "express";
+import { io } from "../../../app";
+import { AudioFileService } from "./AudioFileService";
 
 export class AudioService {
     private streamingBuffers: Buffer[] = [];
+    private audioFileService = new AudioFileService();
 
     public startStream(): void {
         this.streamingBuffers = [];
@@ -36,14 +40,18 @@ export class AudioService {
             throw new Error("Nenhum dado acumulado.");
         }
 
-        const tmpInputFile = path.join(__dirname, "../../../../temp/temp_stream.raw");
+        // Criar diretório temp se não existir
+        const tempDir = path.join(__dirname, "../../../../temp");
+        if (!fs.existsSync(tempDir)) {
+            fs.mkdirSync(tempDir, { recursive: true });
+        }
+
+        const tmpInputFile = path.join(tempDir, "temp_stream.raw");
         fs.writeFileSync(tmpInputFile, fullBuffer);
 
         const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-        const outputFile = path.join(
-            __dirname,
-            `../../../../temp/audio_stream_${timestamp}.mp3`
-        );
+        const filename = `audio_stream_${timestamp}.mp3`;
+        const outputFile = path.join(tempDir, filename);
 
         return new Promise((resolve, reject) => {
             ffmpeg(tmpInputFile)
@@ -52,12 +60,28 @@ export class AudioService {
                 .audioBitrate("128k")
                 .audioFilters(["volume=15dB"])
                 .on("error", (err) => {
-                    fs.unlinkSync(tmpInputFile);
+                    if (fs.existsSync(tmpInputFile)) {
+                        fs.unlinkSync(tmpInputFile);
+                    }
                     reject(err);
                 })
                 .on("end", () => {
-                    fs.unlinkSync(tmpInputFile);
+                    if (fs.existsSync(tmpInputFile)) {
+                        fs.unlinkSync(tmpInputFile);
+                    }
                     this.streamingBuffers = [];
+
+                    // Notificar clientes conectados sobre o novo áudio
+                    const audioInfo = {
+                        filename,
+                        url: `/audio-files/${filename}`,
+                        createdAt: new Date(),
+                        size: fs.statSync(outputFile).size
+                    };
+
+                    io.emit('new-audio', audioInfo);
+                    console.log('Novo áudio disponível:', audioInfo);
+
                     resolve(`OK! Áudio salvo em: ${outputFile}`);
                 })
                 .save(outputFile);

@@ -1,9 +1,11 @@
+// src/app/dashboard/page.tsx
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../../components/Header";
 import DangerLabel from "../../components/DangerLabel";
 import AudioPlayer from "../../components/AudioPlayer";
+import RealTimeAudio from "../../components/RealTimeAudio";
 import Map from "../../components/Map";
 import { User } from "../../interfaces/User";
 import HistoricoOcorrencias from "@/components/HistóricoOccurence";
@@ -12,11 +14,20 @@ import { Occurence } from "@/interfaces/Occurence";
 const Dashboard: React.FC = () => {
     const [usuario, setUsuario] = useState<User | null>(null);
     const [occurences, setOccurences] = useState<Occurence[] | null>(null);
+    const [token, setToken] = useState<string>("");
 
     useEffect(() => {
-        const fetchUsuario = async () => {
-            const token = localStorage.getItem("token");
+        // Obter token do localStorage
+        const storedToken = localStorage.getItem("token");
+        if (storedToken) {
+            setToken(storedToken);
+        }
+    }, []);
 
+    useEffect(() => {
+        if (!token) return;
+
+        const fetchUsuario = async () => {
             try {
                 const userResponse = await axios.get(
                     "http://localhost:3000/api/v1/user/show",
@@ -52,11 +63,10 @@ const Dashboard: React.FC = () => {
                     const usuario: User = {
                         id: userResponse.data.id,
                         nome: userResponse.data.name,
-                        emPerigo: occurenceResponse.data[0].isInDanger,
-                        urlAudio: "https://exemplo.com/audio.mp3",
+                        emPerigo: occurenceResponse.data[0]?.isInDanger || false,
                         localizacao: {
-                            lat: gpsResponse.data[0].latitude,
-                            lng: gpsResponse.data[0].longitude,
+                            lat: gpsResponse.data[0]?.latitude || -23.550520,
+                            lng: gpsResponse.data[0]?.longitude || -46.633309,
                         },
                     };
                     setUsuario(usuario);
@@ -68,21 +78,41 @@ const Dashboard: React.FC = () => {
 
         fetchUsuario();
 
+        // Atualizar dados a cada 5 segundos (exceto áudio que é em tempo real)
         const interval = setInterval(fetchUsuario, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [token]);
 
     if (!usuario) {
-        return <p>Carregando...</p>;
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                    <span>Carregando...</span>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div>
+        <div className="min-h-screen bg-gray-100">
             <Header nomeUsuario={usuario.nome} />
-            <DangerLabel emPerigo={usuario.emPerigo} />
-            <AudioPlayer urlAudio={usuario.urlAudio} />
-            <Map localizacao={usuario.localizacao} />
-            <HistoricoOcorrencias ocorrencias={occurences ?? []}/>
+            
+            <div className="container mx-auto px-4 py-6 space-y-6">
+                {/* Status do usuário */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <DangerLabel emPerigo={usuario.emPerigo} />
+                    <div className="bg-white rounded-lg shadow-lg p-4">
+                        <Map localizacao={usuario.localizacao} />
+                    </div>
+                </div>
+
+                {/* Áudio em tempo real */}
+                {token && <RealTimeAudio token={token} />}
+
+                {/* Histórico de ocorrências */}
+                <HistoricoOcorrencias ocorrencias={occurences ?? []} />
+            </div>
         </div>
     );
 };
