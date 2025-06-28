@@ -10,6 +10,8 @@ import Map from "../../components/Map";
 import { User } from "../../interfaces/User";
 import HistoricoOcorrencias from "@/components/HistóricoOccurence";
 import { Occurence } from "@/interfaces/Occurence";
+import Tabs from "@/components/Tabs";
+
 
 const Dashboard: React.FC = () => {
     const [usuario, setUsuario] = useState<User | null>(null);
@@ -100,18 +102,18 @@ const Dashboard: React.FC = () => {
             
             <div className="container mx-auto px-4 py-6 space-y-6">
                 {/* Status do usuário */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <DangerLabel emPerigo={usuario.emPerigo} />
+                <div className="flex flex-col gap-6">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-2xl font-bold text-gray-800">Mapa de localizações do usuário</h2>
+                        <DangerLabel emPerigo={usuario.emPerigo} />
+                    </div>
                     <div className="bg-white rounded-lg shadow-lg p-4">
                         <Map localizacao={usuario.localizacao} />
                     </div>
                 </div>
 
-                {/* Áudio em tempo real */}
-                {token && <RealTimeAudio token={token} />}
-
-                {/* Histórico de ocorrências */}
-                <HistoricoOcorrencias ocorrencias={occurences ?? []} />
+                {/* Menu de abas para Áudio em tempo real e Histórico de Ocorrências */}
+                <Tabs token={token} ocorrencias={occurences ?? []} />
             </div>
         </div>
     );

@@ -129,7 +129,7 @@ const RealTimeAudio: React.FC<RealTimeAudioProps> = ({ token }) => {
         <div className="p-6 bg-white rounded-lg shadow-lg">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 flex-wrap">
                     <h2 className="text-2xl font-bold text-gray-800">🎵 Áudio em Tempo Real</h2>
                     <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
                     <span className="text-sm text-gray-600">

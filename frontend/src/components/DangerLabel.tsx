@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
+import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 
 interface DangerLabelProps {
     emPerigo: boolean;
@@ -20,25 +21,28 @@ const DangerLabel: React.FC<DangerLabelProps> = ({ emPerigo: propEmPerigo = fals
     };
 
     return (
-        <div className="p-4 space-y-4">
-            {emPerigo ? (
-                <span className="px-4 py-2 font-bold text-white bg-red-500 rounded">
-                    Usuário em Perigo
-                </span>
-            ) : (
-                <span className="px-4 py-2 font-bold text-white bg-green-500 rounded">
-                    Usuário Seguro
-                </span>
-            )}
-            
-            <div>
+        <div className={`w-full max-w-xs p-2 rounded-lg shadow flex flex-col items-center gap-3 border ${emPerigo ? 'border-red-500 bg-red-50' : 'border-green-500 bg-green-50'}`}>
+            <div className="flex flex-col items-center gap-1">
+                {emPerigo ? (
+                    <>
+                        <FaExclamationTriangle className="text-red-500 text-3xl animate-pulse" />
+                        <span className="text-base font-bold text-red-700">Usuário em Perigo</span>
+                    </>
+                ) : (
+                    <>
+                        <FaCheckCircle className="text-green-500 text-3xl" />
+                        <span className="text-base font-bold text-green-700">Usuário Seguro</span>
+                    </>
+                )}
+            </div>
+            {emPerigo && (
                 <button 
                     onClick={desativarPerigo}
-                    className="px-4 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors"
+                    className="px-4 py-1 font-semibold text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors shadow"
                 >
                     Desativar Perigo
                 </button>
-            </div>
+            )}
         </div>
     );
 };
