@@ -53,7 +53,8 @@ void IRAM_ATTR buttonISR() {
 }
 void setupButton(){
     panicQueue = xQueueCreate(5, sizeof(bool));
-    xTaskCreatePinnedToCore(panicTask, "PanicTask", 1792, NULL, 0, NULL, 1);
+
+    xTaskCreatePinnedToCore(panicTask, "PanicTask", 4096, NULL, 1, NULL, 1);
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), buttonISR, FALLING);
 }
