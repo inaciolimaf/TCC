@@ -18,7 +18,7 @@ export class AudioService {
         if (!chunk || chunk.length === 0) {
             throw new Error("Nenhum chunk recebido.");
         }
-
+    
         this.streamingBuffers.push(chunk);
         const totalBufferSize = this.streamingBuffers.reduce(
             (acc, b) => acc + b.length,
@@ -58,7 +58,7 @@ export class AudioService {
                 .inputOptions(["-f s32le", "-ar 16000", "-ac 1"])
                 .audioCodec("libmp3lame")
                 .audioBitrate("128k")
-                .audioFilters(["volume=15dB"])
+                .audioFilters(["volume=17dB"])
                 .on("error", (err) => {
                     if (fs.existsSync(tmpInputFile)) {
                         fs.unlinkSync(tmpInputFile);

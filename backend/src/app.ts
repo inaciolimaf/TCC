@@ -24,7 +24,8 @@ const server = createServer(app);
 export const io = new Server(server, {
     cors: {
         origin: "*",
-        methods: ["GET", "POST"]
+        methods: ["GET", "POST"],
+        allowedHeaders: ["*"]
     }
 });
 
@@ -44,7 +45,13 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log('Cliente desconectado:', socket.id);
     });
+    
+    // Você pode adicionar mais eventos aqui
+    socket.on('join-room', (room) => {
+        socket.join(room);
+        console.log(`Cliente ${socket.id} entrou na sala ${room}`);
+    });
 });
 
-export { server };
-export default app;
+// Exportar apenas o servidor HTTP, não o app express
+export default server;
