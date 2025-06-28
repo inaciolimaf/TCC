@@ -137,17 +137,6 @@ const RealTimeAudio: React.FC<RealTimeAudioProps> = ({ token }) => {
                     </span>
                 </div>
                 
-                <div className="flex items-center space-x-2">
-                    <label className="flex items-center space-x-2 text-sm">
-                        <input
-                            type="checkbox"
-                            checked={autoPlay}
-                            onChange={(e) => setAutoPlay(e.target.checked)}
-                            className="rounded"
-                        />
-                        <span>Auto-play</span>
-                    </label>
-                </div>
             </div>
 
             {/* Último áudio */}

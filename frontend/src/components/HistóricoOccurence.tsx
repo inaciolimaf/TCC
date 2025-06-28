@@ -29,7 +29,7 @@ const HistoricoOcorrencias: React.FC<HistoricoOcorrenciasProps> = ({
     const formatarMotivo = (reason: string) => {
         const motivos: { [key: string]: string } = {
             'FALL': 'Queda detectada',
-            'PANIC': 'Botão de pânico',
+            'PANIC_BUTTON': 'Botão de pânico',
             'MANUAL': 'Ativação manual',
             'HEALTH': 'Emergência médica',
             'OTHER': 'Outro motivo'

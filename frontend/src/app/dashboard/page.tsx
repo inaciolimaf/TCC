@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
         fetchUsuario();
 
         // Atualizar dados a cada 5 segundos (exceto áudio que é em tempo real)
-        const interval = setInterval(fetchUsuario, 5000);
+        const interval = setInterval(fetchUsuario, 1000);
         return () => clearInterval(interval);
     }, [token]);
 
