@@ -8,6 +8,7 @@
 #include "gps.h"
 #include "mpu.h"
 #include "button.h"
+#include "socket_manager.h"  // Novo include
 #include <TinyGPS++.h>
 
 QueueHandle_t audioQueue;
@@ -15,9 +16,10 @@ QueueHandle_t audioQueue;
 TaskHandle_t ReadI2STaskHandle = NULL;
 TaskHandle_t SendHTTPTaskHandle = NULL;
 TaskHandle_t mpuTaskHandle = NULL;
-
+TaskHandle_t socketTaskHandle = NULL;
 uint8_t* buffersPool[NUM_BUFFERS];
 QueueHandle_t buffersQueue;
+
 
 void initBuffersPool() {
     buffersQueue = xQueueCreate(NUM_BUFFERS, sizeof(uint8_t*));
@@ -31,20 +33,35 @@ void initBuffersPool() {
     }
 }
 
-
 void setup() {
     Serial.begin(115200);
-    delay(1000);
     setupWiFi();
     setupI2S();
     setupGPS();
     initBuffersPool();
     setupButton();
+    checkDangerStatus();
+    
     audioQueue = xQueueCreate(QUEUE_SIZE, sizeof(uint8_t*));
     if (audioQueue == NULL) {
         Serial.println("[ERRO] Falha ao criar a fila!");
         while (1);
     }
+    
+    // Configurar Socket.IO após WiFi estar conectado
+    if (ENABLE_SOCKET) {
+        setupSocket();
+        xTaskCreatePinnedToCore(
+            socketTask,
+            "socketTask",
+            8192,
+            NULL,
+            1,
+            &socketTaskHandle,
+            1
+        );
+    }
+    
     if (ENABLE_GPS){
         xTaskCreatePinnedToCore(
           readGPSTask,
@@ -56,6 +73,7 @@ void setup() {
           1
         );
     }
+    
     if (ENABLE_MICROFONE) {
         xTaskCreatePinnedToCore(
             ReadI2STask,       
@@ -67,9 +85,10 @@ void setup() {
             0                  
         );
 
+        // Múltiplas tasks para envio HTTP (como estava antes)
         xTaskCreatePinnedToCore(
             sendHTTPTask,
-            "sendHTTPTask",
+            "sendHTTPTask1",
             4096,
             NULL,
             1,
@@ -78,32 +97,33 @@ void setup() {
         );
         xTaskCreatePinnedToCore(
             sendHTTPTask,
-            "sendHTTPTask",
+            "sendHTTPTask2",
             4096,
             NULL,
             1,
-            &SendHTTPTaskHandle,
+            NULL,
             1
         );
         xTaskCreatePinnedToCore(
             sendHTTPTask,
-            "sendHTTPTask",
+            "sendHTTPTask3",
             4096,
             NULL,
             1,
-            &SendHTTPTaskHandle,
+            NULL,
             1
         );
         xTaskCreatePinnedToCore(
             sendHTTPTask,
-            "sendHTTPTask",
+            "sendHTTPTask4",
             4096,
             NULL,
             1,
-            &SendHTTPTaskHandle,
+            NULL,
             1
         );    
     }
+    
     if (ENABLE_MPU){
       setupMPU();
       xTaskCreatePinnedToCore(
@@ -117,6 +137,7 @@ void setup() {
       );
     }
 }
+
 void loop() {
     vTaskDelay(50 / portTICK_PERIOD_MS);
 }

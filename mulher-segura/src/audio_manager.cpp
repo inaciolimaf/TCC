@@ -54,10 +54,13 @@ void ReadI2STask(void* parameter) {
         vTaskDelete(NULL);
         return;
     }
-
+    
     while (true) {
-        readAudioChunk(chunkBuffer);
+        while (shouldTransmitAudio==0) {
+            vTaskDelay(pdMS_TO_TICKS(10));
+        }
         
+        readAudioChunk(chunkBuffer);
         uint8_t* bufferToSend = NULL;
         if (!getBufferFromPool(&bufferToSend)) {
             continue;

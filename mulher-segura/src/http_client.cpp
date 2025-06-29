@@ -1,6 +1,7 @@
 #include "http_client.h"
 #include "audio_manager.h"
 #include "config.h"
+#include <ArduinoJson.h>
 
 bool sendEmptyPOST(const char* url) {
     HTTPClient http;
@@ -41,6 +42,39 @@ bool endStreamSession() {
         return false;
     }
     return true;
+}
+
+bool checkDangerStatus() {
+    HTTPClient http;
+    http.begin("http://192.168.3.52:3000/api/v1/occurrence/list");
+    
+    int httpCode = http.GET();
+    
+    if (httpCode == 200) {
+        String response = http.getString();
+        
+        StaticJsonDocument<2048> doc;
+        DeserializationError error = deserializeJson(doc, response);
+        
+        if (!error && doc.size() > 0) {
+            JsonObject firstOccurrence = doc[0];
+            bool isInDanger = firstOccurrence["isInDanger"].as<bool>();
+            
+            shouldTransmitAudio = isInDanger;
+            Serial.printf("Status de perigo: %s\n", isInDanger ? "EM PERIGO" : "SEGURO");
+            
+            http.end();
+            return true;
+        }
+        else {
+            Serial.printf("[ERRO] Falha ao analisar JSON: %s\n", error.c_str());
+        }
+    }
+    else {
+        Serial.printf("[ERRO] GET falhou: %s\n", http.errorToString(httpCode).c_str());
+    }
+    http.end();
+    return false;
 }
 
 uint8_t* receiveAudioChunk() {
