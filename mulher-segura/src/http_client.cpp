@@ -129,3 +129,15 @@ bool sendOccurence(const char* json) {
     http.end();
     return (httpCode == 200);
 }
+
+bool sendGPS(const char* json) {
+    HTTPClient http;
+    http.begin(GPS_URL);
+    http.addHeader("Content-Type", "application/json");
+    int httpCode = http.POST(json);
+    if (httpCode <= 0) {
+        Serial.printf("[ERRO] POST GPS falhou: %s\n", http.errorToString(httpCode).c_str());
+    }
+    http.end();
+    return (httpCode == 200);
+}

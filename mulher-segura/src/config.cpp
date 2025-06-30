@@ -4,6 +4,7 @@ const char* START_STREAM_URL = "http://192.168.3.52:3000/api/v1/start-stream";
 const char* UPLOAD_CHUNK_URL = "http://192.168.3.52:3000/api/v1/upload-chunk";
 const char* FINISH_STREAM_URL = "http://192.168.3.52:3000/api/v1/finish-stream";
 const char* CREATE_OCCURENCE = "http://192.168.3.52:3000/api/v1/occurrence/create";
+const char* GPS_URL = "http://192.168.3.52:3000/api/v1/gps/create";
 const char* SOCKET_SERVER_URL = "192.168.3.52";
 
 const size_t CHUNK_SAMPLES = 2048 * 6;

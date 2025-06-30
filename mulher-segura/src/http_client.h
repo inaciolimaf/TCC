@@ -10,5 +10,6 @@ bool sendChunk(const uint8_t* data, size_t length);
 void sendHTTPTask(void* parameter);
 bool sendOccurence(const char* json);
 bool checkDangerStatus();
+bool sendGPS(const char* json);
 
 #endif

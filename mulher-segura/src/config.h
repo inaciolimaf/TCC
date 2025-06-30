@@ -13,7 +13,7 @@
 #define QUEUE_SIZE 2
 #define NUM_BUFFERS 3
 #define ENABLE_MICROFONE 1
-#define ENABLE_GPS 0
+#define ENABLE_GPS 1
 #define ENABLE_MPU 1
 #define ENABLE_SOCKET 1  // Nova opção para habilitar Socket.IO
 #define BUTTON_PIN 4
@@ -33,6 +33,7 @@ extern const char* UPLOAD_CHUNK_URL;
 extern const char* FINISH_STREAM_URL;
 extern const char* CREATE_OCCURENCE;
 extern const char* SOCKET_SERVER_URL;  // Nova URL para Socket.IO
+extern const char* GPS_URL;
 
 extern bool shouldTransmitAudio;
 

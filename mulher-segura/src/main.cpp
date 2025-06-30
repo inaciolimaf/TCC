@@ -66,7 +66,7 @@ void setup() {
         xTaskCreatePinnedToCore(
           readGPSTask,
           "readGPSTask",
-          16486,
+          4096,
           NULL,
           1,
           NULL,
