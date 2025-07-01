@@ -1,17 +1,15 @@
 services:
-    node-app:
-        build:
-            context: ./backend
-            args:
-                - CLEAN_CACHE
+
+    mongodb:
+        image: mongo:7
         ports:
-            - "3001:3001"
-        command: npm run dev
+            - "27017:27017"
         volumes:
-            - .:/app
-    frontend:
-        build:
-            context: ./frontend
-        command: npm run dev
-        ports:
-            - 3000:3000
+            - mongodb_data:/data/db
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=admin
+            - MONGO_INITDB_ROOT_PASSWORD=password
+            - MONGO_INITDB_DATABASE=seu_banco
+
+volumes:
+    mongodb_data:
