@@ -67,21 +67,10 @@ void readGPSTask(void * parameter) {
                         sendGPS(jsonData.c_str());
                     }
                 }
-                
-                // Debug: print satélites apenas se ainda não encontrou fix
-                if (!fixFound && gps.satellites.isUpdated()) {
-                    int numSats = gps.satellites.value();
-                    Serial.print("Satélites: ");
-                    Serial.print(numSats);
-                    Serial.print(" | Fix: ");
-                    Serial.println(gps.location.isValid() ? "SIM" : "NÃO");
-                }
-            } else{
-                Serial.print(gpsData);
             }
+            vTaskDelay(1000 / portTICK_PERIOD_MS);
         }
         
-        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
 

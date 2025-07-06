@@ -1,11 +1,23 @@
 #include "config.h"
+#include <string>
 
-const char* START_STREAM_URL = "http://192.168.3.52:3000/api/v1/start-stream";
-const char* UPLOAD_CHUNK_URL = "http://192.168.3.52:3000/api/v1/upload-chunk";
-const char* FINISH_STREAM_URL = "http://192.168.3.52:3000/api/v1/finish-stream";
-const char* CREATE_OCCURENCE = "http://192.168.3.52:3000/api/v1/occurrence/create";
-const char* GPS_URL = "http://192.168.3.52:3000/api/v1/gps/create";
-const char* SOCKET_SERVER_URL = "192.168.3.52";
+// IP base centralizado
+constexpr const char* BASE_IP = "192.168.3.52";
+
+// URLs compostas dinamicamente
+static std::string start_stream_url = std::string("http://") + BASE_IP + ":3000/api/v1/start-stream";
+static std::string upload_chunk_url = std::string("http://") + BASE_IP + ":3000/api/v1/upload-chunk";
+static std::string finish_stream_url = std::string("http://") + BASE_IP + ":3000/api/v1/finish-stream";
+static std::string create_occurence_url = std::string("http://") + BASE_IP + ":3000/api/v1/occurrence/create";
+static std::string gps_url = std::string("http://") + BASE_IP + ":3000/api/v1/gps/create";
+
+// Ponteiros const char* expostos
+const char* START_STREAM_URL = start_stream_url.c_str();
+const char* UPLOAD_CHUNK_URL = upload_chunk_url.c_str();
+const char* FINISH_STREAM_URL = finish_stream_url.c_str();
+const char* CREATE_OCCURENCE = create_occurence_url.c_str();
+const char* GPS_URL = gps_url.c_str();
+const char* SOCKET_SERVER_URL = BASE_IP;
 
 const size_t CHUNK_SAMPLES = 2048 * 6;
 const size_t CHUNK_SIZE = CHUNK_SAMPLES * 2;

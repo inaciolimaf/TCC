@@ -7,6 +7,9 @@
 
 Adafruit_MPU6050 mpu;
 
+unsigned long lastFallTime = 0;
+float previousG = 1.0;
+
 void setupMPU() {
     Wire.begin(SDA_PIN, SCL_PIN);
     Wire.setClock(100000);
@@ -23,14 +26,23 @@ void readMPUTask(void* parameter) {
     sensors_event_t a, g, temp;
     for (;;) {
         mpu.getEvent(&a, &g, &temp);
+        
         float accelTotal = sqrt(a.acceleration.x * a.acceleration.x +
                                 a.acceleration.y * a.acceleration.y +
                                 a.acceleration.z * a.acceleration.z);
-        float totalG = accelTotal / 9.81;
-        if (totalG < 0.5 || totalG > 2.0) {
-            const char* jsonData = "{\"isInDanger\": true, \"reason\": \"FALL\"}";
-            sendOccurence(jsonData);
+        
+        float totalG = accelTotal / 9.81;        
+        // Thresholds mais rigorosos + verificar mudança brusca
+        
+        if (millis() - lastFallTime > 5000) { // 5 segundos entre detecções
+            if ((totalG < 0.25 || totalG > 6.0)) {
+                lastFallTime = millis();
+                Serial.printf("Queda detectada! Aceleração: %.2f g\n", totalG);
+                const char* jsonData = "{\"isInDanger\": true, \"reason\": \"FALL\"}";
+                sendOccurence(jsonData);
+            }
         }
+        
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
