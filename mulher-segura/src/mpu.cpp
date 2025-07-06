@@ -35,7 +35,7 @@ void readMPUTask(void* parameter) {
         // Thresholds mais rigorosos + verificar mudança brusca
         
         if (millis() - lastFallTime > 5000) { // 5 segundos entre detecções
-            if ((totalG < 0.25 || totalG > 6.0)) {
+            if ((totalG < 0.25 || totalG > 6.0)&&totalG != 0) {
                 lastFallTime = millis();
                 Serial.printf("Queda detectada! Aceleração: %.2f g\n", totalG);
                 const char* jsonData = "{\"isInDanger\": true, \"reason\": \"FALL\"}";
