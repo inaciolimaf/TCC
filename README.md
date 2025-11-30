@@ -1,5 +1,4 @@
 # TCC - Mulher Segura
-[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/inaciolimaf/TCC)
 
 ## Overview
 
